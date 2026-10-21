@@ -1,9 +1,13 @@
 import { AlertTriangle } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
 export default function ConfirmModal({ open, onClose, onConfirm, title, message, confirmText = "Confirmer", danger = false, loading = false }) {
-  if (!open) return null
   return (
-    <div className="modal-overlay animate-fade-in">
-      <div className="modal max-w-md" onClick={e => e.stopPropagation()}>
+    <AnimatePresence>
+      {open && (
+    <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={loading ? undefined : onClose}>
+      <motion.div className="modal max-w-md" role="dialog" aria-modal="true" aria-label={title}
+        initial={{ opacity: 0, scale: 0.92, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ type: "spring", stiffness: 380, damping: 28 }} onClick={e => e.stopPropagation()}>
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-4">
             <div className={`p-2 rounded-full ${danger ? "bg-red-100" : "bg-amber-100"}`}>
@@ -20,7 +24,9 @@ export default function ConfirmModal({ open, onClose, onConfirm, title, message,
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

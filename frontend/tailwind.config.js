@@ -24,8 +24,12 @@ export default {
       animation: {
         "fade-in": "fadeIn 0.2s ease-in-out",
         "slide-in": "slideIn 0.3s ease-out",
+        shimmer: "shimmer 1.4s infinite",
+        "pop": "pop 0.35s ease-out",
       },
       keyframes: {
+        shimmer: { "100%": { transform: "translateX(100%)" } },
+        pop: { "0%": { transform: "scale(1)" }, "50%": { transform: "scale(1.45)" }, "100%": { transform: "scale(1)" } },
         fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
         slideIn: { from: { transform: "translateX(-10px)", opacity: 0 }, to: { transform: "translateX(0)", opacity: 1 } },
       },

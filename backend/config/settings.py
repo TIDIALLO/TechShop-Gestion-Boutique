@@ -11,18 +11,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ─── Sécurité ──────────────────────────────────────────────
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-dev-key-change-in-production!')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '192.168.1.14',
-]
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS', default='localhost,127.0.0.1,backend'
+).split(',')
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://192.168.1.14:5173',
-    'http://192.168.1.14:8000',
-]
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS', default='http://localhost:5173,http://127.0.0.1:5173'
+).split(',')
 
 # ─── Applications ──────────────────────────────────────────
 INSTALLED_APPS = [
@@ -132,6 +127,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_THROTTLE_RATES': {'login': '10/min'},
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',

@@ -5,6 +5,7 @@ import { ChevronRight, Package } from "lucide-react"
 import StoreHeader from "../../components/store/StoreHeader"
 import StoreFooter from "../../components/store/StoreFooter"
 import ProductTile from "../../components/store/ProductTile"
+import { StaggerGroup } from "../../components/motion/Stagger"
 import CookieNotice from "../../components/store/CookieNotice"
 import { useStoreCatalog } from "../../hooks/useStoreCatalog"
 import { addToCart } from "../../store/slices/cartSlice"
@@ -257,11 +258,11 @@ export default function ClientProducts() {
                 <p className="mt-4 text-sm text-[#75757a]">Aucun produit trouvé.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+              <StaggerGroup key={filteredProducts.length} delay={0.03} className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
                 {filteredProducts.map(product => (
                   <ProductTile key={product.id} product={product} onAdd={handleAddToCart} />
                 ))}
-              </div>
+              </StaggerGroup>
             )}
           </section>
         </div>

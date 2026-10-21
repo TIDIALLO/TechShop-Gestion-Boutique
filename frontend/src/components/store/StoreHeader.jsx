@@ -252,7 +252,7 @@ export default function StoreHeader({
             <ShoppingCart className="h-5 w-5" />
             <span className="hidden sm:inline">Panier</span>
             {cartCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#f68b1e] px-1 text-[11px] font-bold text-white">
+              <span key={cartCount} className="animate-pop absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#f68b1e] px-1 text-[11px] font-bold text-white">
                 {cartCount}
               </span>
             )}
@@ -267,7 +267,7 @@ export default function StoreHeader({
           className="relative border-t border-[#ededed] bg-white"
           onMouseLeave={() => setHoverCategory(null)}
         >
-          <div className="mx-auto flex max-w-[1200px] items-center gap-1 overflow-x-auto px-4 md:overflow-visible">
+          <div className="mx-auto flex max-w-[1200px] items-center gap-1 overflow-x-auto scroll-smooth px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <Link
               to="/client/products"
               onMouseEnter={() => setHoverCategory(null)}

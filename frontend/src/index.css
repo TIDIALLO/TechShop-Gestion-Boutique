@@ -10,7 +10,7 @@
 }
 
 @layer components {
-  .btn { @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2; }
+  .btn { @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 inline-flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500; }
   .btn-primary { @apply btn bg-primary-700 text-white hover:bg-primary-800 shadow-sm; }
   .btn-secondary { @apply btn bg-white text-primary-700 border border-primary-200 hover:bg-primary-50; }
   .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700; }
@@ -30,12 +30,14 @@
   .table th { @apply text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider; }
   .table td { @apply px-4 py-3 text-gray-700; }
   .table tbody tr { @apply border-b border-gray-50 hover:bg-gray-50 transition-colors; }
-  .stat-card { @apply card flex items-start space-x-4 hover:shadow-md transition-shadow; }
+  .stat-card { @apply card flex items-start space-x-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg; }
   .sidebar-link { @apply flex items-center space-x-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all; }
   .sidebar-link.active { @apply bg-primary-700 text-white shadow-sm; }
   .sidebar-link:not(.active) { @apply text-gray-600 hover:bg-gray-100; }
   .modal-overlay { @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4; }
   .modal { @apply bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in; }
+  .skeleton { @apply relative overflow-hidden bg-gray-200/80; }
+  .skeleton::after { content: ""; @apply absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent; }
   .section-title { @apply text-xl font-bold text-gray-900 mb-6; }
 }
 
@@ -43,3 +45,11 @@
 ::-webkit-scrollbar-track { background: #f1f5f9; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+html { scroll-behavior: smooth; }
+body { overflow-x: clip; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

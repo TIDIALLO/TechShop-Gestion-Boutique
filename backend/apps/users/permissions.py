@@ -28,3 +28,15 @@ class IsManagerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return request.user.is_authenticated
         return request.user.is_authenticated and request.user.role in ['admin', 'manager']
+
+
+class IsStaffReadManagerWrite(permissions.BasePermission):
+    """Lecture réservée au personnel (jamais aux clients : prix d'achat, données
+    personnelles), écriture pour gestionnaires et administrateurs."""
+    def has_permission(self, request, view):
+        user = request.user
+        if not user.is_authenticated or user.role == 'customer':
+            return False
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return user.role in ['admin', 'manager']

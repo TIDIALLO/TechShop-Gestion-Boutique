@@ -1,6 +1,19 @@
 export const formatCurrency = (amount, currency = "FCFA") =>
   `${Number(amount || 0).toLocaleString("fr-FR")} ${currency}`
 
+// 176 189 500 -> "176,2 M" : évite les montants tronqués dans les cartes et axes de graphiques.
+export const formatCompact = (amount) => {
+  const value = Number(amount || 0)
+  const abs = Math.abs(value)
+  const fmt = (n, unit) => `${n.toFixed(1).replace(".", ",").replace(",0", "")} ${unit}`
+  if (abs >= 1e9) return fmt(value / 1e9, "Md")
+  if (abs >= 1e6) return fmt(value / 1e6, "M")
+  if (abs >= 1e3) return `${Math.round(value / 1e3)} k`
+  return String(Math.round(value))
+}
+
+export const formatCompactCurrency = (amount) => `${formatCompact(amount)} FCFA`
+
 export const formatDate = (dateStr, opts = {}) =>
   new Date(dateStr).toLocaleDateString("fr-FR", {
     day: "2-digit", month: "long", year: "numeric", ...opts
