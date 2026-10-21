@@ -96,41 +96,40 @@ for name, contact, phone, email, city in SUPPLIERS:
     suppliers.append(s)
 print(f"  ✅ {len(suppliers)} fournisseurs créés")
 
-# ── Produits exacts (spécifiés par l'utilisateur) ─────────
-#  Colonnes: (ref, nom, catégorie, prix_achat, prix_vente, stock, min_stock, sup_idx, image_svg)
+# ── Produits : chacun utilise une vraie photo déjà présente dans media/products ──
+#  Colonnes: (ref, nom, catégorie, prix_achat, prix_vente, stock, min_stock, sup_idx, photo)
 PRODUCTS = [
     # ─ Smartphones ─
-    ("ELEC-0001","Samsung Galaxy S25",        "Smartphones",             520000, 650000, 15, 3, 0, "samsung_galaxy_s25.svg"),
-    ("ELEC-0002","iPhone 17",                 "Smartphones",             720000, 900000, 10, 2, 1, "iphone_17.svg"),
+    ("ELEC-0001","iPhone 17 Pro",              "Smartphones",             720000, 900000, 10, 2, 1, "17XA2.1.responsive-lg.centre.png"),
+    ("ELEC-0002","iPhone 17 Pro Max",          "Smartphones",             800000, 990000,  6, 2, 1, "813p5LEFZFL._AC_SL1500_.jpg"),
+    ("ELEC-0003","iPhone 16",                  "Smartphones",             620000, 780000,  9, 2, 1, "04vffdjbrqymnxal9e7c11f-5_13ek.960.webp"),
+    ("ELEC-0004","iPhone 15 Pro",              "Smartphones",             650000, 820000,  7, 2, 1, "iphone-15-pro-finish-select-202309-6-1inch-bluetitanium.jfif"),
+    ("ELEC-0005","iPhone 13",                  "Smartphones",             380000, 470000, 12, 3, 1, "R.jfif"),
+    ("ELEC-0006","Samsung Galaxy S24 Ultra",   "Smartphones",             780000, 950000,  5, 2, 0, "OIP_12.webp"),
+    ("ELEC-0007","Samsung Galaxy A15 5G",      "Smartphones",              95000, 125000, 20, 5, 0, "1JpAx.jpg"),
+    ("ELEC-0008","Xiaomi Redmi Note 13",       "Smartphones",             110000, 145000, 15, 4, 4, "65ab98db198a6.jpeg"),
+    ("ELEC-0009","Smartphone Android 5G",      "Smartphones",              70000,  95000, 18, 5, 4, "OIP_13.webp"),
     # ─ Ordinateurs portables ─
-    ("ELEC-0003","HP Pavilion 15",            "Ordinateurs portables",   420000, 550000,  8, 2, 2, "hp_pavilion_15.svg"),
-    ("ELEC-0004","Dell Inspiron 14",          "Ordinateurs portables",   365000, 480000,  6, 2, 2, "dell_inspiron_14.svg"),
-    ("ELEC-0005","MacBook Air M5",            "Ordinateurs portables",   760000, 950000,  5, 1, 1, "macbook_air_m5.svg"),
-    # ─ Téléviseurs ─
-    ("ELEC-0006","Samsung Smart TV 55 pouces","Téléviseurs",             320000, 420000,  4, 1, 0, "samsung_tv_55.svg"),
-    ("ELEC-0007","LG Smart TV 43 pouces",     "Téléviseurs",             210000, 280000,  7, 2, 3, "lg_tv_43.svg"),
-    # ─ Tablettes ─
-    ("ELEC-0008","iPad Air",                  "Tablettes",               350000, 450000,  6, 2, 1, "ipad_air.svg"),
-    ("ELEC-0009","Samsung Galaxy Tab S10",    "Tablettes",               300000, 390000,  5, 2, 0, "samsung_tab_s10.svg"),
-    # ─ Imprimantes ─
-    ("ELEC-0010","HP LaserJet Pro",           "Imprimantes",             135000, 180000,  5, 2, 2, "hp_laserjet.svg"),
-    ("ELEC-0011","Canon PIXMA G3470",         "Imprimantes",             105000, 145000,  7, 2, 4, "canon_pixma.svg"),
-    # ─ Écouteurs et casques ─
-    ("ELEC-0012","AirPods Pro",               "Écouteurs et casques",    130000, 170000, 12, 3, 1, "airpods_pro.svg"),
-    ("ELEC-0013","Sony WH-1000XM6",           "Écouteurs et casques",    175000, 230000,  8, 2, 3, "sony_wh1000xm6.svg"),
+    ("ELEC-0010","MacBook Air",                "Ordinateurs portables",   760000, 950000,  5, 1, 1, "OIP_10.webp"),
+    ("ELEC-0011","HP ProBook 15",              "Ordinateurs portables",   420000, 550000,  8, 2, 2, "3-6-e1685954073423.jpg"),
+    ("ELEC-0012","HP EliteBook 840",           "Ordinateurs portables",   480000, 620000,  6, 2, 2, "OIP_9.webp"),
+    ("ELEC-0013","Dell Latitude 14",           "Ordinateurs portables",   365000, 480000,  6, 2, 2, "5-32-scaled-e1687163325267.jpg"),
+    ("ELEC-0014","Ultrabook 14 pouces",        "Ordinateurs portables",   330000, 430000,  7, 2, 4, "150732.png"),
+    # ─ Écouteurs, casques et audio ─
+    ("ELEC-0015","AirPods Pro",                "Écouteurs et casques",    130000, 170000, 12, 3, 1, "OIP_5.webp"),
+    ("ELEC-0016","Casque Bluetooth JBL Tune",  "Écouteurs et casques",     35000,  48000, 14, 4, 4, "359091.jpg"),
+    ("ELEC-0017","Enceinte JBL Go 4",          "Haut-parleurs et audio",   30000,  42000, 16, 4, 4, "OIP_8.webp"),
     # ─ Accessoires informatiques ─
-    ("ELEC-0014","Clavier mécanique Logitech","Accessoires informatiques",32000,  45000, 20, 5, 4, "clavier_logitech.svg"),
-    ("ELEC-0015","Souris sans fil Logitech",  "Accessoires informatiques",17000,  25000, 25, 5, 4, "souris_logitech.svg"),
+    ("ELEC-0018","Clavier sans fil Logitech",  "Accessoires informatiques",18000,  27000, 20, 5, 4, "41YQIYANJnL._AC_.jpg"),
+    ("ELEC-0019","Souris sans fil Logitech",   "Accessoires informatiques",10000,  15000, 25, 5, 4, "OIP_14.webp"),
     # ─ Stockage et mémoire ─
-    ("ELEC-0016","Disque SSD Samsung 1 To",   "Stockage et mémoire",      58000,  75000, 18, 5, 0, "ssd_samsung_1to.svg"),
-    ("ELEC-0017","Barrette RAM 16 Go DDR5",   "Stockage et mémoire",      42000,  55000, 15, 4, 4, "ram_16go_ddr5.svg"),
-    ("ELEC-0018","Clé USB 64 Go SanDisk",     "Stockage et mémoire",       7500,  12000, 30, 8, 4, "cle_usb_sandisk.svg"),
-    # ─ Gaming et consoles ─
-    ("ELEC-0019","PlayStation 5",             "Gaming et consoles",      350000, 450000,  4, 1, 5, "playstation5.svg"),
-    ("ELEC-0020","Manette PS5 DualSense",     "Gaming et consoles",       33000,  45000, 10, 3, 5, "manette_ps5.svg"),
-    # ─ Montres connectées ─
-    ("ELEC-0021","Apple Watch Series 11",     "Montres connectées",      210000, 280000,  6, 2, 1, "apple_watch_s11.svg"),
-    ("ELEC-0022","Samsung Galaxy Watch",      "Montres connectées",      135000, 180000,  8, 2, 0, "samsung_galaxy_watch.svg"),
+    ("ELEC-0020","Disque SSD SanDisk Ultra 1 To","Stockage et mémoire",   58000,  75000, 18, 5, 4, "OIP_7.webp"),
+    ("ELEC-0021","Clé USB 64 Go SanDisk Ultra","Stockage et mémoire",      7500,  12000, 30, 8, 4, "71f7w2li-iL._AC_.jpg"),
+    # ─ Réseaux et câbles ─
+    ("ELEC-0022","Routeur Wi-Fi 6 TP-Link AX1500","Réseaux et connectivité",45000, 62000, 10, 3, 4, "OIP_11.webp"),
+    ("ELEC-0023","Switch NETGEAR 8 ports",     "Réseaux et connectivité", 22000,  32000, 12, 3, 4, "GS108_Productcarousel_hero_image_tcm169-104003.jpg"),
+    ("ELEC-0024","Point d'accès Wi-Fi D-Link", "Réseaux et connectivité", 38000,  52000,  8, 2, 4, "R_1.jfif"),
+    ("ELEC-0025","Câble réseau RJ45 10 m",     "Câbles et adaptateurs",    2500,   5000, 40, 10, 4, "CABLE_RESEAU_RG45_10M-0.jpg"),
 ]
 
 from django.conf import settings
@@ -156,9 +155,11 @@ for ref, name, cat_name, purchase, selling, qty, min_stock, sup_idx, img_file in
             "unit": "unité",
         }
     )
-    # Attach SVG image
-    svg_path = os.path.join(MEDIA_DIR, img_file)
-    if not p.image and os.path.exists(svg_path):
+    # Photo réelle déjà présente dans media/products
+    photo_path = os.path.join(MEDIA_DIR, img_file)
+    if not os.path.exists(photo_path):
+        print(f"  ⚠️  Photo introuvable : {img_file}")
+    elif not p.image:
         # Le fichier est déjà dans media/products : on le référence sans le dupliquer.
         p.image.name = f"products/{img_file}"
         p.save(update_fields=["image"])

@@ -29,6 +29,8 @@ function loadCatalog() {
       .then(([products, categoriesRes]) => {
         const categories = (categoriesRes.data.results || categoriesRes.data || [])
           .filter(category => category.is_active !== false)
+          // une catégorie sans produit n'a pas sa place dans la vitrine
+          .filter(category => products.some(product => product.category === category.id))
 
         cache = { at: Date.now(), products, categories }
         return cache
