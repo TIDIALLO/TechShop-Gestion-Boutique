@@ -4,7 +4,7 @@ import { reportsService } from "../../services/reportsService"
 import StatCard from "../../components/common/StatCard"
 import { DashboardSkeleton } from "../../components/common/Skeleton"
 import { StaggerGroup, StaggerItem } from "../../components/motion/Stagger"
-import { formatCurrency } from "../../utils/formatters"
+import { formatCurrency, formatCompact, formatCompactCurrency } from "../../utils/formatters"
 import { useAuth } from "../../hooks/useAuth"
 import PageHeader from "../../components/common/PageHeader"
 import {
@@ -48,9 +48,9 @@ export default function Dashboard() {
           subtitle={formatCurrency(today.revenue)} icon={ShoppingCart} color="blue" />
         <StatCard title="CA du jour" numericValue={today.revenue} format={formatCurrency}
           subtitle={`Bénéfice: ${formatCurrency(today.profit)}`} icon={DollarSign} color="green" />
-        <StatCard title="CA du mois" numericValue={month.revenue} format={formatCurrency}
+        <StatCard title="CA du mois" numericValue={month.revenue} format={formatCompactCurrency}
           subtitle={`${month.sales_count} ventes`} icon={TrendingUp} color="purple" />
-        <StatCard title="Bénéfice mois" numericValue={month.profit} format={formatCurrency}
+        <StatCard title="Bénéfice mois" numericValue={month.profit} format={formatCompactCurrency}
           icon={BarChart3} color="orange" />
       </StaggerGroup>
 
@@ -59,7 +59,7 @@ export default function Dashboard() {
           icon={Package} color="teal" />
         <StatCard title="Total Clients" numericValue={totals.customers}
           icon={Users} color="blue" />
-        <StatCard title="CA Global" numericValue={totals.all_time_revenue} format={formatCurrency}
+        <StatCard title="CA Global" numericValue={totals.all_time_revenue} format={formatCompactCurrency}
           icon={DollarSign} color="green" />
         <StatCard title="Alertes Stock" numericValue={totals.low_stock_alerts}
           subtitle={totals.low_stock_alerts > 0 ? "Produits en stock bas" : "Stocks OK ✓"}
@@ -91,7 +91,7 @@ export default function Dashboard() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
                 <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={formatCompact} />
                 <Tooltip formatter={v => [formatCurrency(v)]} contentStyle={{ borderRadius:"8px", border:"1px solid #e5e7eb" }} />
                 <Legend />
                 <Area type="monotone" dataKey="revenue" name="CA" stroke="#1d4ed8" strokeWidth={2} fill="url(#colorCA)" />
@@ -109,7 +109,7 @@ export default function Dashboard() {
               <BarChart data={sales_evolution}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
                 <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={formatCompact} />
                 <Tooltip formatter={v => [formatCurrency(v),"CA"]} contentStyle={{ borderRadius:"8px" }} />
                 <Bar dataKey="revenue" name="CA" fill="#1d4ed8" radius={[6,6,0,0]} />
               </BarChart>

@@ -267,7 +267,7 @@ export default function StoreHeader({
           className="relative border-t border-[#ededed] bg-white"
           onMouseLeave={() => setHoverCategory(null)}
         >
-          <div className="mx-auto flex max-w-[1200px] items-center gap-1 overflow-x-auto px-4 md:overflow-visible">
+          <div className="mx-auto flex max-w-[1200px] items-center gap-1 overflow-x-auto scroll-smooth px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <Link
               to="/client/products"
               onMouseEnter={() => setHoverCategory(null)}

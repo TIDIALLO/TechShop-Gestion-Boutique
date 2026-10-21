@@ -133,7 +133,8 @@ PRODUCTS = [
     ("ELEC-0022","Samsung Galaxy Watch",      "Montres connectées",      135000, 180000,  8, 2, 0, "samsung_galaxy_watch.svg"),
 ]
 
-MEDIA_DIR = "/home/claude/boutique/backend/media/products"
+from django.conf import settings
+MEDIA_DIR = os.path.join(settings.MEDIA_ROOT, "products")
 products = []
 for ref, name, cat_name, purchase, selling, qty, min_stock, sup_idx, img_file in PRODUCTS:
     p, created = Product.objects.get_or_create(
@@ -157,9 +158,10 @@ for ref, name, cat_name, purchase, selling, qty, min_stock, sup_idx, img_file in
     )
     # Attach SVG image
     svg_path = os.path.join(MEDIA_DIR, img_file)
-    if created and os.path.exists(svg_path):
-        with open(svg_path, 'rb') as f:
-            p.image.save(img_file, ContentFile(f.read()), save=True)
+    if not p.image and os.path.exists(svg_path):
+        # Le fichier est déjà dans media/products : on le référence sans le dupliquer.
+        p.image.name = f"products/{img_file}"
+        p.save(update_fields=["image"])
 
     products.append(p)
     status = "créé" if created else "existant"

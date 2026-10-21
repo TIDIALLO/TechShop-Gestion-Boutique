@@ -18,7 +18,7 @@ export default function StatCard({ title, value, numericValue, format, subtitle,
         <Icon className="w-6 h-6" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-2xl font-bold text-gray-900 truncate">{numericValue !== undefined ? <AnimatedNumber value={numericValue} format={format} /> : value}</p>
+        <p className="text-xl font-bold text-gray-900 truncate" title={typeof value === "string" ? value : undefined}>{numericValue !== undefined ? <AnimatedNumber value={numericValue} format={format} /> : value}</p>
         <p className="text-sm text-gray-600 mt-0.5">{title}</p>
         {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
         {trend !== undefined && (
