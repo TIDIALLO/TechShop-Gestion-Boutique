@@ -2,7 +2,8 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { reportsService } from "../../services/reportsService"
 import StatCard from "../../components/common/StatCard"
-import LoadingSpinner from "../../components/common/LoadingSpinner"
+import { DashboardSkeleton } from "../../components/common/Skeleton"
+import { StaggerGroup, StaggerItem } from "../../components/motion/Stagger"
 import { formatCurrency } from "../../utils/formatters"
 import { useAuth } from "../../hooks/useAuth"
 import PageHeader from "../../components/common/PageHeader"
@@ -29,41 +30,41 @@ export default function Dashboard() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <LoadingSpinner text="Chargement du tableau de bord…" />
+  if (loading) return <DashboardSkeleton />
   if (!data) return null
 
   const { today, month, totals, sales_evolution, monthly_evolution, top_products, category_sales, low_stock_alerts } = data
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6">
       <PageHeader
         title={`Bonjour, ${user?.first_name} 👋`}
         subtitle="Voici le résumé de votre activité commerciale"
       />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Ventes du jour" value={`${today.sales_count}`}
+      <StaggerGroup className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard title="Ventes du jour" numericValue={today.sales_count}
           subtitle={formatCurrency(today.revenue)} icon={ShoppingCart} color="blue" />
-        <StatCard title="CA du jour" value={formatCurrency(today.revenue)}
+        <StatCard title="CA du jour" numericValue={today.revenue} format={formatCurrency}
           subtitle={`Bénéfice: ${formatCurrency(today.profit)}`} icon={DollarSign} color="green" />
-        <StatCard title="CA du mois" value={formatCurrency(month.revenue)}
+        <StatCard title="CA du mois" numericValue={month.revenue} format={formatCurrency}
           subtitle={`${month.sales_count} ventes`} icon={TrendingUp} color="purple" />
-        <StatCard title="Bénéfice mois" value={formatCurrency(month.profit)}
+        <StatCard title="Bénéfice mois" numericValue={month.profit} format={formatCurrency}
           icon={BarChart3} color="orange" />
-      </div>
+      </StaggerGroup>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Total Produits" value={totals.products}
+      <StaggerGroup className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard title="Total Produits" numericValue={totals.products}
           icon={Package} color="teal" />
-        <StatCard title="Total Clients" value={totals.customers}
+        <StatCard title="Total Clients" numericValue={totals.customers}
           icon={Users} color="blue" />
-        <StatCard title="CA Global" value={formatCurrency(totals.all_time_revenue)}
+        <StatCard title="CA Global" numericValue={totals.all_time_revenue} format={formatCurrency}
           icon={DollarSign} color="green" />
-        <StatCard title="Alertes Stock" value={totals.low_stock_alerts}
+        <StatCard title="Alertes Stock" numericValue={totals.low_stock_alerts}
           subtitle={totals.low_stock_alerts > 0 ? "Produits en stock bas" : "Stocks OK ✓"}
           icon={AlertTriangle} color={totals.low_stock_alerts > 0 ? "red" : "green"} />
-      </div>
+      </StaggerGroup>
 
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

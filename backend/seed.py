@@ -184,10 +184,11 @@ CUSTOMERS = [
     ("Cabinet Dr. Ibrahima Bâ","+221338333444","cabinet.ba@sante.sn",    "Almadies, Dakar"),
 ]
 customers = []
-for name, phone, email, address in CUSTOMERS:
+for index, (name, phone, email, address) in enumerate(CUSTOMERS, start=1):
+    # Customer.email est unique : un client sans e-mail reçoit une adresse fictive distincte.
     c, _ = Customer.objects.get_or_create(
         name=name,
-        defaults={"phone": phone, "email": email or "", "address": address}
+        defaults={"phone": phone, "email": email or f"client{index}@demo.techshop.sn", "address": address}
     )
     customers.append(c)
 print(f"  ✅ {len(customers)} clients créés")
@@ -195,7 +196,7 @@ print(f"  ✅ {len(customers)} clients créés")
 # ── Ventes réalistes (30 jours d'historique) ──────────────
 cashier = users.get("cashier", admin)
 manager_u = users.get("manager", admin)
-payment_methods = ["cash","cash","cash","mobile","mobile","card","transfer"]
+payment_methods = ["cash","cash","cash","wave","orange_money","card","transfer"]
 
 # Regrouper par type pour ventes réalistes
 smartphones_laptops = [p for p in products if p.category.name in ["Smartphones","Ordinateurs portables","Tablettes"]]

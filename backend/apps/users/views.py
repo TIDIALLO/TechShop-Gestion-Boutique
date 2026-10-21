@@ -3,6 +3,7 @@ import logging
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth import authenticate
@@ -66,6 +67,8 @@ class RegisterView(APIView):
 class LoginView(APIView):
     """Connexion avec JWT et géolocalisation optionnelle"""
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'login'
 
     def post(self, request):
         ser = LoginSerializer(data=request.data)

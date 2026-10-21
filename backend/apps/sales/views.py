@@ -1,11 +1,11 @@
-﻿"""Vues pour la gestion des ventes et gÃ©nÃ©ration de factures PDF"""
+"""Vues pour la gestion des ventes et génération de factures PDF"""
 import logging
 from io import BytesIO
 from rest_framework import viewsets, permissions, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import APIException, PermissionDenied
 from django.db import transaction
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -31,8 +31,17 @@ from apps.users.views import log_activity, get_client_ip
 logger = logging.getLogger('apps')
 
 
+class OrderError(APIException):
+    """Erreur métier (400) levée dans la transaction : elle annule tout (stock inclus)."""
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'order_error'
+
+    def __init__(self, message):
+        super().__init__({'error': message})
+
+
 def generate_sale_pdf(sale):
-    """GÃ©nÃ¨re le PDF de la facture avec ReportLab"""
+    """Génère le PDF de la facture avec ReportLab"""
     buf = BytesIO()
     doc = SimpleDocTemplate(
         buf, pagesize=A4,
@@ -47,14 +56,14 @@ def generate_sale_pdf(sale):
 
     story = []
 
-    # En-tÃªte
+    # En-tête
     story.append(Paragraph(
-        "ðŸª BoutiqueManager",
+        "TechShop Electronics",
         ParagraphStyle('Title', parent=styles['Title'],
                        fontSize=22, textColor=blue, spaceAfter=4)
     ))
     story.append(Paragraph(
-        "Votre partenaire de gestion commerciale â€” Dakar, SÃ©nÃ©gal",
+        "Votre partenaire de gestion commerciale — Dakar, Sénégal",
         ParagraphStyle('Sub', parent=styles['Normal'],
                        fontSize=10, textColor=gray)
     ))
@@ -65,11 +74,11 @@ def generate_sale_pdf(sale):
     # Infos facture
     info_data = [
         [
-            Paragraph(f"<b>FACTURE NÂ° {sale.invoice_number}</b>",
+            Paragraph(f"<b>FACTURE N° {sale.invoice_number}</b>",
                       ParagraphStyle('', parent=styles['Normal'],
                                      fontSize=16, textColor=blue)),
             Paragraph(
-                f"Date: {sale.created_at.strftime('%d/%m/%Y %H:%M')}<br/>Caissier: {sale.cashier.get_full_name() if sale.cashier else 'â€”'}<br/>Paiement: {sale.get_payment_method_display()}",
+                f"Date: {sale.created_at.strftime('%d/%m/%Y %H:%M')}<br/>Caissier: {sale.cashier.get_full_name() if sale.cashier else '—'}<br/>Paiement: {sale.get_payment_method_display()}",
                 ParagraphStyle('R', parent=styles['Normal'],
                                fontSize=10, alignment=TA_RIGHT)
             )
@@ -83,8 +92,8 @@ def generate_sale_pdf(sale):
     if sale.customer:
         client_data = [
             ['CLIENT', ''],
-            [f"Nom: {sale.customer.name}", f"TÃ©lÃ©phone: {sale.customer.phone or 'â€”'}"],
-            [f"Adresse: {sale.customer.address or 'â€”'}", f"Email: {sale.customer.email or 'â€”'}"],
+            [f"Nom: {sale.customer.name}", f"Téléphone: {sale.customer.phone or '—'}"],
+            [f"Adresse: {sale.customer.address or '—'}", f"Email: {sale.customer.email or '—'}"],
         ]
         ct = Table(client_data, colWidths=['50%', '50%'])
         ct.setStyle(TableStyle([
@@ -99,10 +108,10 @@ def generate_sale_pdf(sale):
         story.append(Spacer(1, 0.4*cm))
 
     # Lignes de vente
-    rows = [['Ref.', 'Produit', 'QtÃ©', 'Prix U.', 'Remise', 'Total']]
+    rows = [['Ref.', 'Produit', 'Qté', 'Prix U.', 'Remise', 'Total']]
     for item in sale.items.all():
         rows.append([
-            item.product_reference or 'â€”',
+            item.product_reference or '—',
             item.product_name,
             str(item.quantity),
             f"{item.unit_price:,.0f}",
@@ -131,7 +140,7 @@ def generate_sale_pdf(sale):
         ['', 'TOTAL TTC:', f"{sale.total_amount:,.0f} FCFA"],
     ]
     if sale.amount_paid > 0:
-        totals.append(['', 'Montant reÃ§u:', f"{sale.amount_paid:,.0f} FCFA"])
+        totals.append(['', 'Montant reçu:', f"{sale.amount_paid:,.0f} FCFA"])
         totals.append(['', 'Monnaie rendue:', f"{sale.change_amount:,.0f} FCFA"])
 
     tt = Table(totals, colWidths=['45%', '32%', '23%'])
@@ -150,7 +159,7 @@ def generate_sale_pdf(sale):
     story.append(HRFlowable(width="100%", thickness=1, color=gray))
     story.append(Spacer(1, 0.2*cm))
     story.append(Paragraph(
-        "Merci pour votre confiance ! | BoutiqueManager | contact@boutique.sn",
+        "Merci pour votre confiance ! | TechShop Electronics",
         ParagraphStyle('Footer', parent=styles['Normal'],
                        fontSize=8, textColor=gray, alignment=TA_CENTER)
     ))
@@ -161,7 +170,7 @@ def generate_sale_pdf(sale):
 
 
 class SaleViewSet(viewsets.ModelViewSet):
-    """CRUD des ventes avec crÃ©ation complÃ¨te et PDF"""
+    """CRUD des ventes avec création complète et PDF"""
     queryset = Sale.objects.select_related(
         'customer', 'cashier'
     ).prefetch_related('items').all()
@@ -213,28 +222,28 @@ class SaleViewSet(viewsets.ModelViewSet):
         is_customer = request.user.role == "customer"
         customer = None
 
+        # Un client ne fixe jamais ses prix : seuls le catalogue et la TVA
+        # par défaut s'appliquent (sinon un prix à 1 FCFA serait accepté).
+        if is_customer:
+            data = {
+                **data,
+                "discount_percent": 0,
+                "tax_rate": Sale._meta.get_field("tax_rate").default,
+                "amount_paid": 0,
+            }
+
         if is_customer:
             try:
                 customer = request.user.customer_profile
             except Exception:
-                return Response(
-                    {
-                        "error": (
-                            "Aucun profil client n'est associÃ© Ã  ce compte."
-                        )
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                raise OrderError("Aucun profil client n'est associé à ce compte.")
         elif data.get("customer_id"):
             from apps.customers.models import Customer
 
             try:
                 customer = Customer.objects.get(id=data["customer_id"])
             except Customer.DoesNotExist:
-                return Response(
-                    {"error": "Client introuvable."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                raise OrderError("Client introuvable.")
 
         sale = Sale.objects.create(
             invoice_number=Sale.generate_invoice_number(),
@@ -258,29 +267,20 @@ class SaleViewSet(viewsets.ModelViewSet):
                     is_active=True,
                 )
             except Product.DoesNotExist:
-                return Response(
-                    {
-                        "error": (
-                            f"Produit ID {item_data['product_id']} introuvable."
-                        )
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                raise OrderError(f"Produit ID {item_data['product_id']} introuvable.")
 
             qty = item_data["quantity"]
 
             if product.quantity < qty:
-                return Response(
-                    {
-                        "error": (
-                            f"Stock insuffisant pour Â« {product.name} Â». "
-                            f"Disponible : {product.quantity}"
-                        )
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                raise OrderError(f"Stock insuffisant pour « {product.name} ». "
+                            f"Disponible : {product.quantity}")
 
-            unit_price = item_data.get("unit_price") or product.selling_price
+            if is_customer:
+                unit_price = product.selling_price
+                item_discount = 0
+            else:
+                unit_price = item_data.get("unit_price") or product.selling_price
+                item_discount = item_data.get("discount_percent", 0)
 
             SaleItem.objects.create(
                 sale=sale,
@@ -290,7 +290,7 @@ class SaleViewSet(viewsets.ModelViewSet):
                 quantity=qty,
                 unit_price=unit_price,
                 unit_cost=product.purchase_price,
-                discount_percent=item_data.get("discount_percent", 0),
+                discount_percent=item_discount,
             )
 
             qty_before = product.quantity
@@ -347,7 +347,7 @@ class SaleViewSet(viewsets.ModelViewSet):
                     type="sale",
                     title="Nouvelle commande client",
                     message=(
-                        f"{customer_name} a passÃ© la commande "
+                        f"{customer_name} a passé la commande "
                         f"{sale.invoice_number} pour "
                         f"{sale.total_amount} FCFA."
                     ),
@@ -359,7 +359,7 @@ class SaleViewSet(viewsets.ModelViewSet):
             "create",
             "Sale",
             sale.id,
-            f"Commande {sale.invoice_number} â€” {sale.total_amount} FCFA",
+            f"Commande {sale.invoice_number} — {sale.total_amount} FCFA",
             get_client_ip(request),
         )
 

@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom"
-import { useEffect } from "react"
+import { lazy, Suspense, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchCurrentUser } from "./store/slices/authSlice"
 
 // Layouts
 import MainLayout from "./layouts/MainLayout"
+import { DashboardSkeleton } from "./components/common/Skeleton"
 
 // Auth
 import Login from "./pages/auth/Login"
@@ -15,22 +16,22 @@ import VerifyEmail from "./pages/auth/VerifyEmail"
 import HomePage from "./pages/home/HomePage"
 
 // Client
-import ClientDashboard from "./pages/client/ClientDashboard"
-import ClientProducts from "./pages/client/ClientProducts"
-import ClientCart from "./pages/client/ClientCart"
+const ClientDashboard = lazy(() => import("./pages/client/ClientDashboard"))
+const ClientProducts = lazy(() => import("./pages/client/ClientProducts"))
+const ClientCart = lazy(() => import("./pages/client/ClientCart"))
 // Pages
-import Dashboard from "./pages/dashboard/Dashboard"
-import Products from "./pages/products/Products"
-import Sales from "./pages/sales/Sales"
-import NewSale from "./pages/sales/NewSale"
-import Customers from "./pages/customers/Customers"
-import Suppliers from "./pages/suppliers/Suppliers"
-import Inventory from "./pages/inventory/Inventory"
-import Reports from "./pages/reports/Reports"
-import Users from "./pages/users/Users"
-import Activity from "./pages/users/Activity"
-import Profile from "./pages/profile/Profile"
-import MapPage from "./pages/map/MapPage"
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"))
+const Products = lazy(() => import("./pages/products/Products"))
+const Sales = lazy(() => import("./pages/sales/Sales"))
+const NewSale = lazy(() => import("./pages/sales/NewSale"))
+const Customers = lazy(() => import("./pages/customers/Customers"))
+const Suppliers = lazy(() => import("./pages/suppliers/Suppliers"))
+const Inventory = lazy(() => import("./pages/inventory/Inventory"))
+const Reports = lazy(() => import("./pages/reports/Reports"))
+const Users = lazy(() => import("./pages/users/Users"))
+const Activity = lazy(() => import("./pages/users/Activity"))
+const Profile = lazy(() => import("./pages/profile/Profile"))
+const MapPage = lazy(() => import("./pages/map/MapPage"))
 
 
 function RequireAuth({ children, roles }) {
@@ -90,6 +91,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <Suspense fallback={<div className="p-6"><DashboardSkeleton /></div>}>
       <Routes>
 
         {/* Public */}
@@ -212,6 +214,7 @@ export default function App() {
         />
 
       </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

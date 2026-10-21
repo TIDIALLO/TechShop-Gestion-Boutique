@@ -15,7 +15,7 @@ from .serializers import (
 )
 
 
-from apps.users.permissions import IsManagerOrReadOnly, IsManager
+from apps.users.permissions import IsManagerOrReadOnly, IsManager, IsStaffReadManagerWrite
 from apps.users.views import log_activity, get_client_ip
 
 logger = logging.getLogger('apps')
@@ -60,7 +60,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     """CRUD complet des produits avec filtres avancés"""
     queryset = Product.objects.select_related('category', 'supplier').all()
-    permission_classes = [IsManagerOrReadOnly]
+    permission_classes = [IsStaffReadManagerWrite]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'is_active', 'supplier']
     search_fields = ['name', 'reference', 'description', 'barcode']

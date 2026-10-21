@@ -9,7 +9,7 @@ from .models import Customer
 from .serializers import CustomerSerializer
 from .emails import send_confirmation_email, read_confirmation_token
 
-from apps.users.permissions import IsManagerOrReadOnly
+from apps.users.permissions import IsStaffReadManagerWrite
 from apps.users.views import log_activity, get_client_ip
 
 
@@ -18,7 +18,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
     queryset = Customer.objects.select_related("user").all()
     serializer_class = CustomerSerializer
-    permission_classes = [IsManagerOrReadOnly]
+    permission_classes = [IsStaffReadManagerWrite]
 
     filter_backends = [
         DjangoFilterBackend,

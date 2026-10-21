@@ -1,3 +1,7 @@
 .env
 node_modules/
 __pycache__/
+
+dist/
+*.sqlite3
+.pytest_cache/

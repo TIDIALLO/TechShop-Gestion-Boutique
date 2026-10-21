@@ -8,6 +8,7 @@ import StoreHeader from "../../components/store/StoreHeader"
 import StoreFooter from "../../components/store/StoreFooter"
 import HeroCarousel from "../../components/store/HeroCarousel"
 import ProductTile from "../../components/store/ProductTile"
+import { StaggerGroup } from "../../components/motion/Stagger"
 import CookieNotice from "../../components/store/CookieNotice"
 import { categoryIcon } from "../../components/store/categoryIcon"
 import { useStoreCatalog } from "../../hooks/useStoreCatalog"
@@ -361,11 +362,11 @@ export default function HomePage() {
                 ))}
 
                 <Section title="Tous nos produits" to="/client/products">
-                  <div className="grid grid-cols-2 gap-2 p-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                  <StaggerGroup delay={0.03} className="grid grid-cols-2 gap-2 p-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                     {products.slice(0, 12).map(product => (
                       <ProductTile key={product.id} product={product} onAdd={handleAddToCart} />
                     ))}
-                  </div>
+                  </StaggerGroup>
                   {products.length > 12 && (
                     <div className="border-t border-[#ededed] p-3 text-center">
                       <Link

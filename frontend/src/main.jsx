@@ -4,13 +4,16 @@ import { Provider } from "react-redux"
 import { Toaster } from "react-hot-toast"
 import { store } from "./store"
 import App from "./App"
+import MotionProvider from "./components/motion/MotionProvider"
 import "./index.css"
 import "leaflet/dist/leaflet.css"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <MotionProvider>
+        <App />
+      </MotionProvider>
       <Toaster
         position="top-right"
         toastOptions={{

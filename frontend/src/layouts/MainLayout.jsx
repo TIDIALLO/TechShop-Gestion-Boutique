@@ -1,11 +1,14 @@
 import { useState } from "react"
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom"
+import { AnimatePresence } from "framer-motion"
+import PageTransition from "../components/motion/PageTransition"
 import Sidebar from "./Sidebar"
 import TopBar from "./TopBar"
 import { useSelector } from "react-redux"
 
 export default function MainLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const location = useLocation()
   const { sidebarOpen, sidebarCollapsed } = useSelector(s => s.ui)
 
   return (
@@ -31,7 +34,11 @@ export default function MainLayout() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar onMobileMenuOpen={() => setMobileOpen(true)} />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <Outlet />
+          <AnimatePresence mode="wait" initial={false}>
+            <PageTransition key={location.pathname}>
+              <Outlet />
+            </PageTransition>
+          </AnimatePresence>
         </main>
       </div>
     </div>
